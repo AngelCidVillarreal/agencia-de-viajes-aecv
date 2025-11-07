@@ -1,88 +1,107 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Referencia al formulario y al div de resultado
-    const formularioIndividual = document.getElementById('Cotización');
-    const resultadoDiv = document.getElementById('resultado-individual');
+var formIndividual = document.getElementById("individual");
+var formPaquetes = document.getElementById("paquetes");
 
-    // Costos Base (Según tu HTML)
-    const costoAdulto = 865;
-    const costoMenor = 437;
-    const costoDiaIndividual = 769;
+function calcularIndividual(e) {
+    var total = 0;
 
-    if (formularioIndividual) {
-        formularioIndividual.addEventListener('submit', function(event) {
-            event.preventDefault(); // Detiene el envío del formulario
+    if (formIndividual.vuelo.value == "sin-avion")
+    {
+        total += 999;
+    }
+    else if (formIndividual.vuelo.value == "ida")
+    {
+        total += 2499;
+    }
+    else if (formIndividual.vuelo.value == "ida-vuelta")
+    {
+        total += 5999;
+    }
 
-            let costoVuelo = 0;
-            let costoHospedaje = 0;
-            let costoTotal = 0;
-            let detalleHTML = "";
+    if (formIndividual.hospedaje.value == "sin-hotel")
+    {
+        total += 499;
+    }
+    else if (formIndividual.hospedaje.value == "sencilla")
+    {
+        total += 799;
+    }
+    else if (formIndividual.hospedaje.value == "doble")
+    {
+        total += 999;
+    }
 
-            resultadoDiv.innerHTML = ""; // Limpiar resultado previo
+    total += formIndividual.adultos.value * 865;
 
-            // --- 1. Obtener y Calcular Costo de Vuelo ---
-            const vueloSeleccionado = formularioIndividual.querySelector('input[name="vuelo"]:checked');
-            if (!vueloSeleccionado) {
-                 resultadoDiv.innerHTML = '<p style="color: red;">⚠️ Por favor, selecciona una **Opción de Vuelo**.</p>';
-                 return;
-            }
-            switch (vueloSeleccionado.value) {
-                case 'sin-avion': costoVuelo = 999; detalleHTML += '<li>Vuelo (Sin Avión): **999 MXN**</li>'; break;
-                case 'ida': costoVuelo = 2499; detalleHTML += '<li>Vuelo (IDA): **2,499 MXN**</li>'; break;
-                case 'ida-vuelta': costoVuelo = 5999; detalleHTML += '<li>Vuelo (IDA y VUELTA): **5,999 MXN**</li>'; break;
-            }
+    total += parseInt(formIndividual.menores.value) * 437;
+    
+    if (!formIndividual.diasIndividual.value) 
+    {
+        alert("indique los dias que estara de viaje");
+    }
 
-            // --- 2. Obtener y Calcular Costo de Hospedaje ---
-            const hospedajeSeleccionado = formularioIndividual.querySelector('input[name="hospedaje"]:checked');
-            if (!hospedajeSeleccionado) {
-                 resultadoDiv.innerHTML = '<p style="color: red;">⚠️ Por favor, selecciona una **Opción de Hospedaje**.</p>';
-                 return;
-            }
-            switch (hospedajeSeleccionado.value) {
-                case 'sin-hotel': costoHospedaje = 499; detalleHTML += '<li>Hospedaje (Sin Hotel): **499 MXN**</li>'; break;
-                case 'sencilla': costoHospedaje = 799; detalleHTML += '<li>Hospedaje (Sencilla): **799 MXN**</li>'; break;
-                case 'doble': costoHospedaje = 999; detalleHTML += '<li>Hospedaje (Doble): **999 MXN**</li>'; break;
-            }
+    total += parseInt(formIndividual.diasIndividual.value) * 769;
 
-            // --- 3. Calcular Costo por Personas ---
-            const numAdultos = parseInt(document.getElementById('adultos').value) || 0;
-            const numMenores = parseInt(document.getElementById('menores').value) || 0;
-            
-            const costoPersonas = (numAdultos * costoAdulto) + (numMenores * costoMenor);
+    formIndividual.totalIndividual.value = total.toLocaleString('es-MX');
+}
 
-            detalleHTML += `<li>Adultos (${numAdultos} x ${costoAdulto} MXN): **${(numAdultos * costoAdulto).toLocaleString('es-MX')} MXN**</li>`;
-            detalleHTML += `<li>Menores (${numMenores} x ${costoMenor} MXN): **${(numMenores * costoMenor).toLocaleString('es-MX')} MXN**</li>`;
-            
-            // --- 4. Calcular Costo por Días ---
-            const numDiasIndividual = parseInt(document.getElementById('dias-individual').value) || 0;
+function calcularPaquetes(e) {
+    var total = 0;
 
-            if (numDiasIndividual <= 0) {
-                 resultadoDiv.innerHTML = '<p style="color: red;">⚠️ Por favor, ingresa un número de **Días** válido (mínimo 1).</p>';
-                 return;
-            }
+    if (formPaquetes.destino.value == "suramerica")
+    {
+        total += 7999;
+    }
+    else if (formPaquetes.destino.value == "europa")
+    {
+        total += 21999;
+    }
+    else if (formPaquetes.destino.value == "africa")
+    {
+        total += 17999;
+    }
+    else if (formPaquetes.destino.value == "asia")
+    {
+        total += 25999;
+    }
+    else if (formPaquetes.destino.value == "norteamerica")
+    {
+        total += 12999;
+    }
 
-            const costoDias = numDiasIndividual * costoDiaIndividual;
-            detalleHTML += `<li>Días (${numDiasIndividual} x ${costoDiaIndividual} MXN): **${costoDias.toLocaleString('es-MX')} MXN**</li>`;
+    if (!formPaquetes.diasPaquete.value) 
+    {
+        alert("Escriba el Número de Días en la seccón de Paquetes");
+        return;
+    }
+    total += parseInt(formPaquetes.diasPaquete.value) * 899;
 
-            // --- 5. Calcular Costo Total ---
-            costoTotal = costoVuelo + costoHospedaje + costoPersonas + costoDias;
+    if (formPaquetes.especial.checked)
+    {
+        total += 19999;
+    }
 
-            // --- 6. Mostrar Resultado Final ---
-            let htmlResultado = `
-                <div style="border: 2px solid #007bff; padding: 15px; margin-top: 15px; background-color: #e9f7ff; border-radius: 5px;">
-                    <h3 style="margin-top: 0; color: #007bff;">✅ COTIZACIÓN INDIVIDUAL</h3>
-                    <p><strong>Pasajeros:</strong> ${numAdultos} Adultos y ${numMenores} Menores por ${numDiasIndividual} días.</p>
-                    <hr>
-                    <h4>Desglose:</h4>
-                    <ul style="list-style: none; padding-left: 0;">
-                        ${detalleHTML}
-                    </ul>
-                    <h3 style="color: #28a745;">Costo Total Estimado: <span style="font-size: 1.5em;">${costoTotal.toLocaleString('es-MX')} MXN</span></h3>
-                </div>
-            `;
-            resultadoDiv.innerHTML = htmlResultado;
-        });
+    if (formPaquetes.bebidas.checked)
+    {
+        total += 699;
     }
     
-    // Aquí es donde comenzarías el código para el segundo formulario (Paquetes)
-    // ...
-});
+    if (formPaquetes.buceo.checked)
+    {
+        total += 699;
+    }
+    
+    if (formPaquetes.expedicion.checked)
+    {
+        total += 699;
+    }
+    
+    if (formPaquetes.fotografias.checked)
+    {
+        total += 699;
+    }
+    
+    if (formPaquetes.pesca.checked)
+    {
+        total += 699;
+    }
+    formPaquetes.totalPaquetes.value = total.toLocaleString('es-MX');}

@@ -3,7 +3,6 @@ var formPaquetes = document.getElementById("paquetes");
 
 function calcularIndividual(e) {
     var total = 0;
-    var total = .16 * total;
 
     if (formIndividual.vuelo.value == "sin-avion")
     {
@@ -42,10 +41,11 @@ function calcularIndividual(e) {
 
     total += parseInt(formIndividual.diasIndividual.value) * 769;
 
+    total = total * 1.16;
+
 
     formIndividual.totalIndividual.value = total.toLocaleString('es-MX');
-    
-    
+
 }
 
 function calcularPaquetes(e) {
